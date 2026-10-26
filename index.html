@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Калькулятор комиссии USDT TRC20: сколько TRX спишут за перевод</title>
+<meta name="description" content="Посчитайте, сколько TRX сгорит при переводе USDT в сети TRON: 6,5 или 13,1 TRX. Сравнение: сжечь TRX, арендовать энергию по рынку или через FeeCut. Данные сети в реальном времени.">
+<link rel="canonical" href="https://feecut.github.io/">
+<meta property="og:title" content="Сколько TRX спишут за перевод USDT — калькулятор">
+<meta property="og:description" content="6,5 или 13,1 TRX за перевод USDT TRC20 — и как заплатить в ~3 раза меньше.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://feecut.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f8a5f'/%3E%3Cpath d='M18 4 8 18h7l-2 10 10-14h-7z' fill='white'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Почему за перевод USDT иногда списывается 13 TRX, а иногда 6,5?","acceptedAnswer":{"@type":"Answer","text":"Если на адресе получателя сейчас 0 USDT, контракту USDT нужно создать новую запись баланса — это около 131 000 энергии (≈13,1 TRX при сжигании). Если у получателя уже есть USDT — около 65 000 энергии (≈6,5 TRX)."}},
+{"@type":"Question","name":"Зависит ли комиссия от суммы перевода?","acceptedAnswer":{"@type":"Answer","text":"Нет. Перевод 1 USDT и 10 000 USDT расходует одинаковое количество энергии."}},
+{"@type":"Question","name":"Безопасно ли арендовать энергию?","acceptedAnswer":{"@type":"Answer","text":"Для аренды нужен только адрес кошелька. Нормальный сервис не просит seed-фразу, приватный ключ, подключение кошелька или подпись транзакций."}},
+{"@type":"Question","name":"Нужны ли TRX, если энергия уже арендована?","acceptedAnswer":{"@type":"Answer","text":"Кроме энергии перевод использует около 345 единиц пропускной способности. Сеть даёт каждому активированному адресу 600 бесплатных единиц в сутки — обычно этого хватает на один перевод в день. Если они израсходованы, сгорит около 0,35 TRX."}}
+]}
+</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="./">Fee<span>Cut</span></a>
+  <nav class="top"><a href="./">Калькулятор</a><a href="guides/">Статьи</a></nav>
+</div></header>
+
+<main class="wrap">
+<h1>Сколько TRX спишут за перевод USDT — и как заплатить меньше</h1>
+<div class="answer"><p><b>Коротко:</b> перевод USDT в сети TRON без энергии сжигает <b><span data-v="burn65">6,5</span> TRX</b>, если у получателя уже есть USDT, и <b><span data-v="burn131">13,1</span> TRX</b>, если у него 0 USDT. С арендованной энергией тот же перевод обходится в 2–3 раза дешевле. Сумма перевода на комиссию не влияет.</p></div>
+
+<section class="card" aria-label="Калькулятор">
+  <label for="addr">Адрес получателя <span class="muted small">(необязательно — проверим, есть ли на нём USDT)</span></label>
+  <div class="addr-row">
+    <input id="addr" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="T…">
+    <button class="btn-ghost" id="check" type="button">Проверить</button>
+  </div>
+  <p id="addrMsg" class="muted" role="status"></p>
+
+  <label>У получателя есть USDT?</label>
+  <div class="seg">
+    <label><input type="radio" name="kind" value="65" checked> Да, уже есть USDT</label>
+    <label><input type="radio" name="kind" value="131"> Нет, 0 USDT / новый адрес</label>
+  </div>
+
+  <div class="row">
+    <div><label for="n">Переводов в месяц</label><input id="n" type="number" min="1" max="10000" value="10"></div>
+    <div><label for="cur">Показывать в</label>
+      <select id="cur"><option value="trx">TRX</option><option value="usd">USD</option><option value="rub">₽ рубли</option><option value="kzt">₸ тенге</option></select></div>
+  </div>
+
+  <div id="results" aria-live="polite">
+    <div class="res-line">
+      <div class="res-head"><span>🔥 Сжечь TRX (без энергии)</span><b id="r-burn">—</b></div>
+      <div class="bar"><i id="b-burn" style="background:var(--bar-burn);width:100%"></i></div>
+      <div class="res-sub" id="s-burn"></div>
+    </div>
+    <div class="res-line">
+      <div class="res-head"><span>📊 Аренда энергии, средняя цена рынка</span><b id="r-mkt">—</b></div>
+      <div class="bar"><i id="b-mkt" style="background:var(--bar-mkt)"></i></div>
+      <div class="res-sub" id="s-mkt"></div>
+    </div>
+    <div class="res-line">
+      <div class="res-head"><span>⚡ FeeCut</span><b id="r-us">—</b></div>
+      <div class="bar"><i id="b-us" style="background:var(--bar-us)"></i></div>
+      <div class="res-sub" id="s-us"></div>
+    </div>
+    <p class="save" id="save"></p>
+    <a class="btn btn-main" id="cta" href="https://t.me/FeeCutEnergyBot?start=p_CALC">Купить энергию в Telegram →</a>
+    <p class="cta-note" id="ctaNote">Без регистрации и депозита. Кошелёк подключать не нужно — только адрес.</p>
+    <p class="res-sub" id="stake"></p>
+  </div>
+</section>
+
+<p class="small muted" id="srcLine">Цена энергии в сети и курс TRX загружаются при открытии страницы.</p>
+
+<h2>Как это считается</h2>
+<p>Перевод USDT — это вызов смарт-контракта. Ему нужна <b>энергия</b>: около 65 000 единиц, если у получателя уже есть USDT, и около 131 000, если баланс USDT у получателя нулевой (контракту приходится создавать новую запись). Если энергии на вашем адресе нет, сеть сжигает TRX по текущей цене — сейчас <b><span data-v="fee">100</span> sun</b> (0,0001 TRX) за единицу энергии.</p>
+<p>Поэтому: 65 000 × 0,0001 = <b>6,5 TRX</b>, 131 000 × 0,0001 = <b>13,1 TRX</b>. Арендованная энергия делегируется на ваш адрес на время, и сжигать TRX не нужно.</p>
+<table>
+  <tr><th>Способ</th><th>65K (есть USDT)</th><th>131K (0 USDT)</th></tr>
+  <tr><td>Сжечь TRX</td><td><span data-v="burn65">6,5</span> TRX</td><td><span data-v="burn131">13,1</span> TRX</td></tr>
+  <tr><td>Аренда, рынок (мин–макс)</td><td><span data-v="mktRange">1,30–4,81</span> TRX</td><td>≈ ×2</td></tr>
+  <tr><td>FeeCut</td><td><span data-v="p65">2,30</span> TRX</td><td><span data-v="p131">4,60</span> TRX</td></tr>
+</table>
+<p class="small muted">Цены рынка — <span data-v="mktN">15</span> сервисов из сравнительной таблицы netts.io/market, данные на <span data-v="mktDate">26.10.2026</span>. Цены меняются каждый час.</p>
+
+<h2>Если уже списали или не получается отправить</h2>
+<div class="guides">
+  <a href="guides/spisali-13-trx/">Почему за перевод USDT списали 13 TRX, а не 6,5</a>
+  <a href="guides/net-trx-ne-mogu-otpravit-usdt/">Не могу отправить USDT: на кошельке нет TRX. Что делать</a>
+  <a href="guides/out-of-energy/">Перевод USDT не прошёл (OUT OF ENERGY), а TRX списались</a>
+</div>
+
+<h2>Частые вопросы</h2>
+<div class="faq">
+  <details><summary>Зависит ли комиссия от суммы перевода?</summary><p>Нет. Перевод 1 USDT и 10 000 USDT расходует одинаковое количество энергии. Поэтому один крупный перевод дешевле нескольких мелких.</p></details>
+  <details><summary>Безопасно ли арендовать энергию?</summary><p>Для аренды нужен только адрес кошелька. Нормальный сервис не просит seed-фразу, приватный ключ, подключение кошелька или подпись транзакций. Если просят — уходите.</p></details>
+  <details><summary>Нужны ли TRX, если энергия уже арендована?</summary><p>Кроме энергии перевод использует около 345 единиц пропускной способности (bandwidth). Сеть даёт каждому активированному адресу 600 бесплатных единиц в сутки — обычно этого хватает на один перевод в день. Если они уже израсходованы, сгорит около 0,35 TRX.</p></details>
+  <details><summary>Сколько действует энергия FeeCut?</summary><p>1 час. Энергия обычно приходит за 1–2 минуты после оплаты — отправляйте USDT, пока она активна.</p></details>
+</div>
+</main>
+
+<footer><div class="wrap">
+  <p>FeeCut — независимый сервис аренды энергии TRON. Не связан с TRON DAO, Tether или кошельками. Информация на сайте не является финансовой рекомендацией.</p>
+  <p>Telegram-бот: <a href="https://t.me/FeeCutEnergyBot?start=p_CALC">@FeeCutEnergyBot</a> · Поддержка: <a href="https://t.me/FeeCutSupport">@FeeCutSupport</a> · Канал: <a href="https://t.me/FeeCutEnergy">@FeeCutEnergy</a></p>
+</div></footer>
+
+<script>
+(function(){
+  var USDT='TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
+  var D={updated:"2026-10-26",energyFeeSun:100,energy65:65000,energy131:131000,
+    trx:{usd:0.330,rub:26.89,kzt:149.51},
+    market:{min:1.30,median:2.99,max:4.81,providers:15},
+    stakeTrxPerTxDay:6693,feecut:{p65:2.30,p131:4.60,first65:1.80}};
+  var live={fee:false,price:false,stake:false};
+  var stakeRatio=null; // energy per 1 staked TRX
+  var $=function(id){return document.getElementById(id)};
+  function fmt(x,d){return Number(x).toLocaleString('ru-RU',{maximumFractionDigits:(d==null?2:d)})}
+  function f2(x){return Number(x).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})}
+  var SYM={trx:' TRX',usd:' $',rub:' ₽',kzt:' ₸'};
+  function money(trx,cur){if(cur==='trx')return f2(trx)+' TRX';var v=trx*D.trx[cur];return fmt(v,cur==='usd'?2:0)+SYM[cur]}
+  function dateRu(s){var p=String(s).split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:s}
+  function timeout(ms){var c=new AbortController();setTimeout(function(){c.abort()},ms);return c.signal}
+
+  function setV(name,val){var els=document.querySelectorAll('[data-v="'+name+'"]');for(var i=0;i<els.length;i++)els[i].textContent=val}
+
+  function render(){
+    var kind=document.querySelector('input[name=kind]:checked').value;
+    var n=Math.max(1,Math.min(10000,parseInt($('n').value,10)||1));
+    var cur=$('cur').value;
+    var e=kind==='131'?D.energy131:D.energy65;
+    var k=e/D.energy65;
+    var burn=e*D.energyFeeSun/1e6;
+    var mkt=D.market.median*k;
+    var us=kind==='131'?D.feecut.p131:D.feecut.p65;
+    $('r-burn').textContent=money(burn,cur);
+    $('r-mkt').textContent=money(mkt,cur);
+    $('r-us').textContent=money(us,cur);
+    $('b-mkt').style.width=Math.min(100,mkt/burn*100)+'%';
+    $('b-us').style.width=Math.min(100,us/burn*100)+'%';
+    $('s-burn').textContent='за перевод · '+money(burn*n,cur)+' в месяц';
+    $('s-mkt').textContent='за перевод · '+money(mkt*n,cur)+' в месяц · рынок: '+f2(D.market.min*k)+'–'+f2(D.market.max*k)+' TRX';
+    $('s-us').textContent='за перевод · '+money(us*n,cur)+' в месяц';
+    var save=(burn-us)*n, pct=Math.round((1-us/burn)*100);
+    $('save').innerHTML='Экономия с FeeCut: <b>'+money(save,cur)+'</b> в месяц ('+pct+'% против сжигания)';
+    $('cta').textContent='Купить '+(kind==='131'?'131K':'65K')+' энергии за '+f2(us)+' TRX в Telegram →';
+    $('ctaNote').textContent='Первый заказ 65K — '+f2(D.feecut.first65)+' TRX. Без регистрации и депозита. Кошелёк подключать не нужно — только адрес.';
+    var perDay=n/30;
+    var stakeTrx=stakeRatio?(e*perDay/stakeRatio):(D.stakeTrxPerTxDay*k*perDay);
+    $('stake').textContent='Для сравнения: чтобы переводить без оплаты за счёт своего стейкинга, нужно заморозить ≈ '+fmt(Math.round(stakeTrx),0)+' TRX ('+money(stakeTrx,'usd')+').';
+    setV('fee',fmt(D.energyFeeSun,0));
+    setV('burn65',fmt(D.energy65*D.energyFeeSun/1e6,1));
+    setV('burn131',fmt(D.energy131*D.energyFeeSun/1e6,1));
+    setV('p65',f2(D.feecut.p65));setV('p131',f2(D.feecut.p131));
+    setV('mktRange',f2(D.market.min)+'–'+f2(D.market.max));
+    setV('mktN',D.market.providers);setV('mktDate',dateRu(D.updated));
+    $('srcLine').textContent='Цена энергии в сети: '+fmt(D.energyFeeSun,0)+' sun ('+(live.fee?'TronGrid, сейчас':'данные на '+dateRu(D.updated))+'). Курс TRX: $'+fmt(D.trx.usd,3)+' ('+(live.price?'CoinGecko, сейчас':'на '+dateRu(D.updated))+'). Средняя цена аренды — медиана '+D.market.providers+' сервисов netts.io/market на '+dateRu(D.updated)+'.';
+  }
+
+  // 1) fresher fallback numbers from data.json (updated daily)
+  fetch('data.json',{cache:'no-cache',signal:timeout(5000)}).then(function(r){return r.json()}).then(function(j){
+    ['updated','energy65','energy131','stakeTrxPerTxDay'].forEach(function(k){if(j[k])D[k]=j[k]});
+    if(j.market)D.market=j.market; if(j.feecut)D.feecut=j.feecut;
+    if(!live.fee&&j.energyFeeSun)D.energyFeeSun=j.energyFeeSun;
+    if(!live.price&&j.trx)D.trx=j.trx;
+    render();
+  }).catch(function(){});
+
+  // 2) live chain parameters
+  fetch('https://api.trongrid.io/wallet/getchainparameters',{method:'POST',signal:timeout(6000)}).then(function(r){return r.json()}).then(function(j){
+    var p=(j.chainParameter||[]).filter(function(x){return x.key==='getEnergyFee'})[0];
+    if(p&&p.value>0&&p.value<10000){D.energyFeeSun=p.value;live.fee=true;render()}
+  }).catch(function(){});
+  fetch('https://api.trongrid.io/wallet/getaccountresource',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({address:USDT,visible:true}),signal:timeout(6000)}).then(function(r){return r.json()}).then(function(j){
+    if(j.TotalEnergyLimit&&j.TotalEnergyWeight){stakeRatio=j.TotalEnergyLimit/j.TotalEnergyWeight;live.stake=true;render()}
+  }).catch(function(){});
+  // 3) live TRX price
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=tron&vs_currencies=usd,rub,kzt',{signal:timeout(6000)}).then(function(r){return r.json()}).then(function(j){
+    if(j.tron&&j.tron.usd){D.trx={usd:j.tron.usd,rub:j.tron.rub||D.trx.rub,kzt:j.tron.kzt||D.trx.kzt};live.price=true;render()}
+  }).catch(function(){});
+
+  // 4) recipient check
+  function setKind(v){var r=document.querySelector('input[name=kind][value="'+v+'"]');if(r)r.checked=true;render()}
+  $('check').addEventListener('click',function(){
+    var a=$('addr').value.trim(), msg=$('addrMsg');
+    if(!/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(a)){msg.textContent='Адрес TRON начинается с T и состоит из 34 символов. Проверьте, что скопировали целиком.';return}
+    msg.textContent='Проверяем…';
+    fetch('https://api.trongrid.io/v1/accounts/'+a,{signal:timeout(8000)}).then(function(r){return r.json()}).then(function(j){
+      var acc=(j.data||[])[0];
+      if(!acc){msg.textContent='⚠️ Адрес ещё не активирован, USDT на нём нет → нужно около 131 000 энергии (≈'+fmt(D.energy131*D.energyFeeSun/1e6,1)+' TRX при сжигании).';setKind('131');return}
+      var bal=0;(acc.trc20||[]).forEach(function(t){if(t[USDT])bal=Number(t[USDT])});
+      if(bal>0){msg.textContent='✅ У получателя уже есть USDT → достаточно 65 000 энергии.';setKind('65')}
+      else{msg.textContent='⚠️ У получателя сейчас 0 USDT → нужно около 131 000 энергии. 65 000 не хватит.';setKind('131')}
+    }).catch(function(){msg.textContent='Не удалось проверить (сеть недоступна). Правило: 65K — если у получателя есть USDT, 131K — если 0 USDT.'});
+  });
+  $('addr').addEventListener('keydown',function(e){if(e.key==='Enter')$('check').click()});
+  document.querySelectorAll('input[name=kind]').forEach(function(r){r.addEventListener('change',render)});
+  $('n').addEventListener('input',render);$('cur').addEventListener('change',render);
+  render();
+})();
+</script>
+</body>
+</html>

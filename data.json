@@ -1,0 +1,11 @@
+{
+  "updated": "2026-10-26",
+  "energyFeeSun": 100,
+  "energy65": 65000,
+  "energy131": 131000,
+  "trx": {"usd": 0.330, "rub": 26.89, "kzt": 149.51},
+  "market": {"min": 1.30, "median": 2.99, "max": 4.81, "providers": 15, "source": "netts.io/market"},
+  "stakeTrxPerTxDay": 6693,
+  "feecut": {"p65": 2.30, "p131": 4.60, "first65": 1.80},
+  "bot": "FeeCutEnergyBot"
+}
