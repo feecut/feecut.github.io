@@ -10,8 +10,8 @@
 <meta property="og:description" content="6,5 или 13,1 TRX за перевод USDT TRC20 — и как заплатить в ~3 раза меньше.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://feecut.github.io/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f8a5f'/%3E%3Cpath d='M18 4 8 18h7l-2 10 10-14h-7z' fill='white'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css">
+<link rel="icon" href="/assets/feecut-logo.png">
+<link rel="stylesheet" href="style.css?v=20261030-theme1">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Почему за перевод USDT иногда списывается 13 TRX, а иногда 6,5?","acceptedAnswer":{"@type":"Answer","text":"Если на адресе получателя сейчас 0 USDT, контракту USDT нужно создать новую запись баланса — это около 131 000 энергии (≈13,1 TRX при сжигании). Если у получателя уже есть USDT — около 65 000 энергии (≈6,5 TRX)."}},
@@ -20,62 +20,74 @@
 {"@type":"Question","name":"Нужны ли TRX, если энергия уже арендована?","acceptedAnswer":{"@type":"Answer","text":"Кроме энергии перевод использует около 345 единиц пропускной способности. Сеть даёт каждому активированному адресу 600 бесплатных единиц в сутки — обычно этого хватает на один перевод в день. Если они израсходованы, сгорит около 0,35 TRX."}}
 ]}
 </script>
+<meta name="color-scheme" content="light dark">
+<script src="/theme.js?v=20261030-theme1" defer></script>
 </head>
 <body>
-<header class="top"><div class="wrap">
-  <a class="logo" href="./">Fee<span>Cut</span></a>
-  <nav class="top"><a href="./">Калькулятор</a><a href="guides/">Статьи</a></nav>
+<header class="top site-header"><div class="wrap header-inner">
+  <a class="logo brand" href="./"><img src="/assets/feecut-logo.png" width="50" height="50" alt="Логотип FeeCut"><span>FeeCut</span></a>
+  <nav class="top main-nav" aria-label="Основная навигация"><a href="./">Калькулятор</a><a href="guides/">Статьи</a></nav>
 </div></header>
 
-<main class="wrap">
-<h1>Сколько TRX спишут за перевод USDT — и как заплатить меньше</h1>
-<div class="answer"><p><b>Коротко:</b> перевод USDT в сети TRON без энергии сжигает <b><span data-v="burn65">6,5</span> TRX</b>, если у получателя уже есть USDT, и <b><span data-v="burn131">13,1</span> TRX</b>, если у него 0 USDT. С арендованной энергией тот же перевод обходится в 2–3 раза дешевле. Сумма перевода на комиссию не влияет.</p></div>
+<main class="wrap shell home">
+<section class="hero"><div class="hero-copy"><p class="eyebrow">USDT · TRC20</p><h1>Переводите USDT.<br>Платите меньше TRX.</h1><p class="hero-subtitle">Рассчитайте комиссию и сравните аренду энергии с обычным переводом.</p><p class="hero-trust">Без регистрации и депозита. Кошелёк подключать не нужно — только адрес.</p></div>
 
-<section class="card" aria-label="Калькулятор">
-  <label for="addr">Адрес получателя <span class="muted small">(необязательно — проверим, есть ли на нём USDT)</span></label>
-  <div class="addr-row">
-    <input id="addr" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="T…">
-    <button class="btn-ghost" id="check" type="button">Проверить</button>
-  </div>
-  <p id="addrMsg" class="muted" role="status"></p>
 
-  <label>У получателя есть USDT?</label>
-  <div class="seg">
+<section class="card calculator" aria-labelledby="calc-heading"><h2 id="calc-heading">Сколько вы сэкономите?</h2>
+  <fieldset class="recipient"><legend>У получателя есть USDT?</legend>
+  <div class="seg segment">
     <label><input type="radio" name="kind" value="65" checked> Да, уже есть USDT</label>
     <label><input type="radio" name="kind" value="131"> Нет, 0 USDT / новый адрес</label>
   </div>
 
-  <div class="row">
+  </fieldset>
+  <div class="row calc-fields">
     <div><label for="n">Переводов в месяц</label><input id="n" type="number" min="1" max="10000" value="10"></div>
-    <div><label for="cur">Показывать в</label>
+    <div><label for="cur">Валюта</label>
       <select id="cur"><option value="trx">TRX</option><option value="usd">USD</option><option value="rub">₽ рубли</option><option value="kzt">₸ тенге</option></select></div>
   </div>
 
   <div id="results" aria-live="polite">
     <div class="res-line">
-      <div class="res-head"><span>🔥 Сжечь TRX (без энергии)</span><b id="r-burn">—</b></div>
+      <div class="res-head"><span><img class="result-icon" src="/assets/fire.svg" alt="">Без энергии</span><b id="r-burn">—</b></div>
       <div class="bar"><i id="b-burn" style="background:var(--bar-burn);width:100%"></i></div>
       <div class="res-sub" id="s-burn"></div>
     </div>
     <div class="res-line">
-      <div class="res-head"><span>📊 Аренда энергии, средняя цена рынка</span><b id="r-mkt">—</b></div>
+      <div class="res-head"><span><img class="result-icon" src="/assets/chart.svg" alt="">Средняя цена рынка</span><b id="r-mkt">—</b></div>
       <div class="bar"><i id="b-mkt" style="background:var(--bar-mkt)"></i></div>
       <div class="res-sub" id="s-mkt"></div>
     </div>
-    <div class="res-line">
-      <div class="res-head"><span>⚡ FeeCut</span><b id="r-us">—</b></div>
+    <div class="res-line our-price">
+      <div class="res-head"><span><img class="result-icon result-logo" src="/assets/feecut-logo.png" alt="">FeeCut</span><b id="r-us">—</b></div>
       <div class="bar"><i id="b-us" style="background:var(--bar-us)"></i></div>
       <div class="res-sub" id="s-us"></div>
     </div>
     <p class="save" id="save"></p>
     <a class="btn btn-main" id="cta" href="https://t.me/FeeCutEnergyBot?start=p_CALC">Купить энергию в Telegram →</a>
     <p class="cta-note" id="ctaNote">Без регистрации и депозита. Кошелёк подключать не нужно — только адрес.</p>
-    <p class="res-sub" id="stake"></p>
+
   </div>
+<details class="address-check"><summary>Проверить адрес получателя</summary>  <label for="addr">Адрес получателя <span class="muted small">(необязательно — проверим, есть ли на нём USDT)</span></label>
+  <div class="addr-row">
+    <input id="addr" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="T…">
+    <button class="btn-ghost" id="check" type="button">Проверить</button>
+  </div>
+  <p id="addrMsg" class="muted" role="status"></p>
+
+</details>
+</section>
 </section>
 
 <p class="small muted" id="srcLine">Цена энергии в сети и курс TRX загружаются при открытии страницы.</p>
 
+<section class="guide-section" aria-labelledby="help-heading"><div class="section-title"><h2 id="help-heading">Помощь с переводом USDT</h2><a href="guides/">Все статьи <img class="ui-icon" src="/assets/arrow-right.svg" width="20" height="20" alt=""></a></div><div class="guide-grid">
+<a class="guide-link" href="guides/spisali-13-trx/"><span class="guide-icon"><img src="/assets/file.svg" width="26" height="26" alt=""></span><span class="guide-text"><strong>Списали 13 TRX вместо 6,5?</strong><span>Почему так бывает и как избежать лишних комиссий.</span></span></a>
+<a class="guide-link" href="guides/net-trx-ne-mogu-otpravit-usdt/"><span class="guide-icon"><img src="/assets/wallet.svg" width="26" height="26" alt=""></span><span class="guide-text"><strong>Не хватает TRX для перевода?</strong><span>Способы решить проблему и продолжить перевод.</span></span></a>
+<a class="guide-link" href="guides/out-of-energy/"><span class="guide-icon"><img src="/assets/warning.svg" width="26" height="26" alt=""></span><span class="guide-text"><strong>Ошибка OUT OF ENERGY?</strong><span>Что это значит и как перевести USDT без ошибки.</span></span></a>
+</div></section>
+<section class="explanation article-content"><div class="answer"><p><b>Коротко:</b> перевод USDT в сети TRON без энергии сжигает <b><span data-v="burn65">6,5</span> TRX</b>, если у получателя уже есть USDT, и <b><span data-v="burn131">13,1</span> TRX</b>, если у него 0 USDT. С арендованной энергией тот же перевод обходится в 2–3 раза дешевле. Сумма перевода на комиссию не влияет.</p></div>
+<p class="res-sub" id="stake"></p>
 <h2>Как это считается</h2>
 <p>Перевод USDT — это вызов смарт-контракта. Ему нужна <b>энергия</b>: около 65 000 единиц, если у получателя уже есть USDT, и около 131 000, если баланс USDT у получателя нулевой (контракту приходится создавать новую запись). Если энергии на вашем адресе нет, сеть сжигает TRX по текущей цене — сейчас <b><span data-v="fee">100</span> sun</b> (0,0001 TRX) за единицу энергии.</p>
 <p>Поэтому: 65 000 × 0,0001 = <b>6,5 TRX</b>, 131 000 × 0,0001 = <b>13,1 TRX</b>. Арендованная энергия делегируется на ваш адрес на время, и сжигать TRX не нужно.</p>
@@ -87,12 +99,7 @@
 </table>
 <p class="small muted">Цены рынка — <span data-v="mktN">15</span> сервисов из сравнительной таблицы netts.io/market, данные на <span data-v="mktDate">26.10.2026</span>. Цены меняются каждый час.</p>
 
-<h2>Если уже списали или не получается отправить</h2>
-<div class="guides">
-  <a href="guides/spisali-13-trx/">Почему за перевод USDT списали 13 TRX, а не 6,5</a>
-  <a href="guides/net-trx-ne-mogu-otpravit-usdt/">Не могу отправить USDT: на кошельке нет TRX. Что делать</a>
-  <a href="guides/out-of-energy/">Перевод USDT не прошёл (OUT OF ENERGY), а TRX списались</a>
-</div>
+
 
 <h2>Частые вопросы</h2>
 <div class="faq">
@@ -101,9 +108,10 @@
   <details><summary>Нужны ли TRX, если энергия уже арендована?</summary><p>Кроме энергии перевод использует около 345 единиц пропускной способности (bandwidth). Сеть даёт каждому активированному адресу 600 бесплатных единиц в сутки — обычно этого хватает на один перевод в день. Если они уже израсходованы, сгорит около 0,35 TRX.</p></details>
   <details><summary>Сколько действует энергия FeeCut?</summary><p>1 час. Энергия обычно приходит за 1–2 минуты после оплаты — отправляйте USDT, пока она активна.</p></details>
 </div>
+</section>
 </main>
 
-<footer><div class="wrap">
+<footer class="site-footer"><div class="wrap">
   <p>FeeCut — независимый сервис аренды энергии TRON. Не связан с TRON DAO, Tether или кошельками. Информация на сайте не является финансовой рекомендацией.</p>
   <p>Telegram-бот: <a href="https://t.me/FeeCutEnergyBot?start=p_CALC">@FeeCutEnergyBot</a> · Поддержка: прямо в боте, отвечаем 24/7 · Канал: <a href="https://t.me/FeeCutEnergy">@FeeCutEnergy</a></p>
 </div></footer>
@@ -145,9 +153,9 @@
     $('s-mkt').textContent='за перевод · '+money(mkt*n,cur)+' в месяц · рынок: '+f2(D.market.min*k)+'–'+f2(D.market.max*k)+' TRX';
     $('s-us').textContent='за перевод · '+money(us*n,cur)+' в месяц';
     var save=(burn-us)*n, pct=Math.round((1-us/burn)*100);
-    $('save').innerHTML='Экономия с FeeCut: <b>'+money(save,cur)+'</b> в месяц ('+pct+'% против сжигания)';
-    $('cta').textContent='Купить '+(kind==='131'?'131K':'65K')+' энергии за '+f2(us)+' TRX в Telegram →';
-    $('ctaNote').textContent='Первый заказ 65K — '+f2(D.feecut.first65)+' TRX. Без регистрации и депозита. Кошелёк подключать не нужно — только адрес.';
+    $('save').innerHTML='<b>'+money(save,cur).replace(',00','')+'</b><span>экономии в месяц</span><small>'+pct+'% против сжигания TRX</small>';
+    $('cta').textContent='Купить энергию в Telegram';
+    $('ctaNote').textContent='Первый заказ 65K — '+f2(D.feecut.first65)+' TRX.';
     var perDay=n/30;
     var stakeTrx=stakeRatio?(e*perDay/stakeRatio):(D.stakeTrxPerTxDay*k*perDay);
     $('stake').textContent='Для сравнения: чтобы переводить без оплаты за счёт своего стейкинга, нужно заморозить ≈ '+fmt(Math.round(stakeTrx),0)+' TRX ('+money(stakeTrx,'usd')+').';
